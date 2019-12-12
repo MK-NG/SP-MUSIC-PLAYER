@@ -1,38 +1,262 @@
-.App {
-  text-align: center;
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,500,700);
+html,
+body {
+  font-family: 'Roboto', sans-serif;
+  background: #364156;
+  overflow: hidden;
+  margin: 0;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+
+
+#App {
+  
+  /* Give app full page to work with */
+  height: 100vh;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+audio {
+  position: absolute;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+h2 {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+h3 {
+  font-size: 16px;
+  font-weight: 400;
+}
+
+p {
+  display: inline-block;
+  font-size: 14px;
+  font-weight: 400;
+  margin-bottom: 10px;
+  color: grey;
+}
+
+.audio-player {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  justify-content: space-around;
+  transition: all 0.2s;
+  width: 80vw;
+  max-width: 700px;
+  background: white;
+  -webkit-box-shadow: 0px 6px 80px 21px rgba(47,79,138,1);
+  -moz-box-shadow: 0px 6px 80px 21px rgba(47,79,138,1);
+  box-shadow: 0px 6px 80px 21px rgba(47,79,138,1);
+  box-sizing: border-box;
+}
+@media screen and (max-width: 560px) {
+  .audio-player {
+    width: 100vw;
+    background: white;
+  }
 }
 
-.App-link {
-  color: #61dafb;
+.info {
+  flex: 1;
+  padding: 16px 30px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.cover-art {
+  position: absolute;
+  bottom: 160px;
+  right: -30px;
+  width: 230px;
+  height: 230px;
+  background: url(https://cdn8.openculture.com/2018/02/26214700/First-Aid-Kit-Ruins-e1519715301105.jpg);
+  background-size: cover;
+  border: 2px solid white;
+  -webkit-box-shadow: 0px 4px 16px -8px rgba(0,0,0,0.75);
+  -moz-box-shadow: 0px 4px 16px -8px rgba(0,0,0,0.75);
+  box-shadow: 0px 4px 16px -8px rgba(0,0,0,0.75);
+  transition: all 0.2s;
+  margin: 5px 5px solid white;
+}
+@media screen and (max-width: 560px) {
+  .cover-art {
+    position: relative;
+    width: 100%;
+    height: 80vw;
+    bottom: inherit;
+    right: inherit;
   }
-  to {
-    transform: rotate(360deg);
+}
+@media screen and (max-width: 520px) {
+  .cover-art {
+    position: relative;
+    width: 100%;
+    height: 90vw;
+    bottom: inherit;
+    right: inherit;
   }
+}
+@media screen and (max-height: 500px) {
+  .cover-art {
+    display: none;
+    width: 0px;
+    height: 0px;
+  }
+}
+.cover-art a {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.cover-art a:hover {
+  background: white;
+  opacity: 0.2;
+}
+
+.controls {
+  display: flex;
+  width: 100%;
+  height: 100px;
+  background: white;
+  margin-top: -1px;
+  padding: 20px;
+  box-sizing: border-box;
+  transition: all 0.2s;
+}
+.controls_plays {
+  flex: 2;
+  display: flex;
+  justify-content: space-around;
+}
+.controls_player {
+  flex: 1;
+  fill: #556C96;
+  display: flex;
+  justify-content: space-around;
+}
+@media screen and (max-width: 420px) {
+  controls {
+    flex-direction: column;
+    height: 200px;
+  }
+}
+
+#play_btn, #prev_btn, #next_btn {
+  cursor: pointer;
+  width: 26px;
+  max-width: 20px;
+  transition: all 0.2s;
+  
+  
+}
+#play_btn:hover, #prev_btn:hover, #next_btn:hover, #pause_btn:hover {
+  fill: #565349;
+  transform: scale(1.2);
+
+
+}
+
+#pause_btn {
+  display: none;
+}
+
+#volume_btn, #shuffle_btn, #playlist_btn {
+  cursor: pointer;
+  width: 23px;
+  max-width: 18px;
+  transition: all 0.2s;
+}
+#volume_btn:hover, #shuffle_btn:hover, #playlist_btn:hover {
+  fill: #FFF0F5;
+  transform: scale(1.2);
+}
+
+.progressbar_slide {
+  width: 100%;
+  background: #364156;
+  height: 6px;
+}
+
+.progressbar_range {
+  width: 0;
+  background: #FFF0F5;
+  height: 4px;
+}
+
+
+
+
+#page-wrap {
+  text-align: center;
+
+  /* Prevent sidebar from showing a scrollbar on page */
+  overflow: auto;
+}
+
+/* Individual item */
+.bm-item {
+  display: inline-block;
+
+  /* Our sidebar item styling */
+  text-decoration: none;
+  margin-bottom: 10px;
+  color: #d1d1d1;
+  transition: color 0.2s;
+}
+
+/* Change color on hover */
+.bm-item:hover {
+  color: #FFF0F5;
+}
+
+/* The rest copied directly from react-burger-menu docs */
+
+/* Position and sizing of burger button */
+.bm-burger-button {
+  position: fixed;
+  width: 18px;
+  height: 15px;
+  left: 65%;
+  top: 54.5%;
+}
+
+/* Color/shape of burger icon bars */
+.bm-burger-bars {
+  background: #556C96;
+}
+
+/* Position and sizing of clickable cross button */
+.bm-cross-button {
+  height: 24px;
+  width: 24px;
+}
+
+/* Color/shape of close button cross */
+.bm-cross {
+  background: #bdc3c7;
+}
+
+/* General sidebar styles */
+.bm-menu {
+  background: #373a47;
+  padding: 2.5em 1.5em 0;
+  font-size: 1.15em;
+}
+
+/* Morph shape necessary with bubble or elastic */
+.bm-morph-shape {
+  fill: #373a47;
+}
+
+/* Wrapper for item list */
+.bm-item-list {
+  color: #b8b7ad;
+}
+
+/* Styling of overlay */
+.bm-overlay {
+  background: rgba(0, 0, 0, 0.3);
 }
