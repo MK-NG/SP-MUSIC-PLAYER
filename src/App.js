@@ -1,86 +1,220 @@
 import React from 'react';
 import './App.css';
-import ReactAudioPlayer from 'react-audio-player';
+import Controls from './Components/Controls';
+import Tracklist from './Components/Tracklist';
+import data from './Components/Data/tracks.json';
+import Playlist from './Components/Playlist';
+import queryString from 'query-string';
+import Search from './Components/Search';
 
-function App() {
+
+class App extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      playing: false,
+      currentTrackIndex: 0,
+      shuffle: false,
+      showAlbum: false,
+      playlistExists: false,
+      playlist: [],
+      loggedIn: false,
+      username: '',
+      filterString: '',
+      token: '',
+      data: []
+    };
+
+    this.handleClick = this.handleClick.bind(this);
+    this.playAudio = this.playAudio.bind(this);
+    this.pauseAudio = this.pauseAudio.bind(this);
+    this.selectTrackNumber = this.selectTrackNumber.bind(this);
+    this.shuffleSong = this.shuffleSong.bind(this);
+    this.addToPlaylist = this.addToPlaylist.bind(this);
+    this.removeFromPlaylist = this.removeFromPlaylist.bind(this);
+    this.setState({ tracks: data.tracks });
+  }
+
+  playAudio(){
+    this.audioElement.load();
+    this.audioElement.play();
+  }
+  pauseAudio(){
+    this.audioElement.pause();
+  }
+  selectTrackNumber(trackId){
+    this.setState({currentTrackIndex:trackId,playing:true},this.playAudio);
+  }
+  shuffleSong(){  
+    const min = 1;
+    const max = 10;
+    const randomNumber = min + Math.random() * (max - min);
+    this.setState({currentTrackIndex:Math.round(randomNumber),playing:true},this.playAudio);
+    // can be better.
+  }
+
+
+  addToPlaylist(trackId){
+    var playlistUpdated = this.state.playlist.concat(data.tracks.find(y => y.id === trackId));
+    this.setState({playlist: playlistUpdated, playlistExists:true});
+  }
+
+  removeFromPlaylist(trackId){
+      //logic
+      // remove numebr from array
+      //check if empty, if it is setState playlistExists: false
+      if(!this.state.playlist && !this.state.playlist.length){
+      this.setState({playlistExists: false})
+      }
+  }
+
+  componentDidMount() {
+
+    let parsed = queryString.parse(window.location.search);
+    let accessToken = parsed.access_token;
+    
+   if (!accessToken)
+      return;
+    fetch('https://api.spotify.com/v1/me', { 
+      headers: {'Authorization': 'Bearer ' + accessToken}
+      }).then(response => response.json())
+      .then(data => this.setState({username: data.display_name}))
+      this.setState({loggedIn: true});
+      this.setState({token: accessToken})
+  
+      fetch('https://api.spotify.com/v1/search?q=tania%20bowra&type=artist', {
+        headers: {
+          'Authorization': 'Bearer ' + accessToken,
+           'Accept': 'application/json',
+         },
+       }).then(response => response.json())
+       .then(json => {
+         this.setState({
+           data: json.items,
+          });
+       });
+       console.log(this.state.data)
+     }
+
+  
+
+handleClick(e) {
+  switch (e.target.id) {
+    case "play":
+      this.setState((state, props) => {
+        let currentTrackIndex = state.currentTrackIndex;
+        if (currentTrackIndex === 0) {
+          currentTrackIndex = 1;
+        }
+        return {
+          playing: true,
+          currentTrackIndex: currentTrackIndex
+          
+        };
+      },this.playAudio);
+      break;
+    case "pause":
+      this.setState({ playing: false },this.pauseAudio);
+      break;
+    case "prev":
+      this.setState((state, props) => {
+        let currentIndex = state.currentTrackIndex - 1;
+        if (currentIndex <= 0) {
+          return null;
+        } else {
+          return { playing:true,currentTrackIndex: currentIndex };
+        }
+      },this.playAudio);
+      break;
+    case "next":
+      this.setState((state, props) => {
+        let currentIndex = state.currentTrackIndex + 1;
+        if (currentIndex > data.tracks.length) {
+          return null;
+        } else {
+          return { playing:true,currentTrackIndex: currentIndex };
+        }
+      },this.playAudio);
+      break;
+      case "shuffle":
+         this.setState({shuffle: true},this.shuffleSong)
+      break;
+      case "showAlbum":
+          this.setState({showAlbum: true});
+        break;
+      case "showArtist":
+          this.setState({showAlbum: false});
+        break;
+      case "search":
+        this.setState({})
+          
+      break;
+    default:
+      break;
+  }
+}
+render() {
   return (
-    <div className="App">
-      <header className="App-header">
-       
-      </header>
-      <body>
-  <audio id="audio">
-	 {/* Audio Source */}
-</audio>
+<div className="App">
+    <div className="audio-player">
+      <div className="logo">
+        {!this.state.loggedIn &&
+       <button onClick={() => window.location='http://localhost:8888/login'}>
+          Sign in with Spotify
+          </button>
+        }
+        {this.state.loggedIn &&
+       <div>
+          <h2> 
+            Hello, {this.state.username}
+          </h2>
+          <Search token={this.state.token} />
+        </div>
+        }
+        </div>
 
-<div class="audio-player">
-	<div class="cover-art">
-		<a href="https://cdn8.openculture.com/2018/02/26214700/First-Aid-Kit-Ruins-e1519715301105.jpg" alt="" rel="noopener noreferrer" target="_blank"></a>
-	</div>
-	<div class="info">
-		<h2>Artist Name</h2>
-		<h3>Song title</h3>
-		<p id="timeleft">00:00</p>
-		<div class="progressbar_slide">
-			<div class="progressbar_range"></div>
-		</div>
-	</div>
-	<div class="controls">
-		<div class="controls_plays">
-
-			<svg id="prev_btn" viewBox="0 0 24.5 23.6">
-				<polygon points="0,11.8 13.5,0 13.5,10.7 24.5,0 24.5,23.6 13.5,12.9 13.5,23.6 "/>
-			</svg>
-
-
-			<svg id="play_btn" viewBox="0 0 24.5 30.9">
-				<g id="play_btn">
-					<path d="M0,30.9L0,0l24.5,15.4L0,30.9z"/>
-				</g>
-				<g id="pause_btn">
-					<rect x="0" y="0" width="8.2" height="30.9"/>
-					<rect x="16.2" y="0" width="8.2" height="30.9"/>
-				</g>
-			</svg>
-
-			<svg id="next_btn" viewBox="0 0 24.5 23.6">
-				<polygon points="25,11.8 11.5,0 11.5,10.7 0.5,0 0.5,23.6 11.5,12.9 11.5,23.6 "/>
-			</svg>
-
-		</div>
-		<div class="controls_player">
-
-			<svg id="volume_btn" viewBox="0 0 23 23">
-				<path d="M17.5,6.6v9.9L11.4,13H5.5v-3h6L17.5,6.6z M10.7,7H2.5v9h8.2l9.8,5.3V1.2L10.7,7z"/>
-			</svg>
-
-			<svg id="shuffle_btn" viewBox="0 0 23 23">
-				<path d="M7.3,6l0.4,2.8l3.6-5l-5-3.6l0.5,3C3.6,4.4,1.1,7.4,1.1,11c0,4.4,2.4,8,7.4,8.3v-2.7
-							c-3-0.3-4.7-2.7-4.7-5.6C3.8,8.8,5.5,7,7.3,6z"/>
-				<path d="M21.5,11c0-4.4-4-8-8-8.3v2.7c2,0.3,5.2,2.7,5.2,5.6c0,2.2-1.2,4-3,5l-0.4-2.8l-3.6,5l5,3.6l-0.6-3
-							C19.4,17.6,21.5,14.6,21.5,11z"/>
-			</svg>
-
-			<svg id="playlist_btn" viewBox="0 0 23 23">
-				<rect x="1.5" y="2" width="20" height="3"/>
-				<rect x="1.5" y="9" width="20" height="3"/>
-				<rect x="1.5" y="17" width="20" height="3"/>
-			</svg>
-
-		</div>
-	</div>
-
-
-
+        <audio ref={(audio)=>{this.audioElement = audio}} src={"/songs/"+this.state.currentTrackIndex+".mp3"}/>
+          <div className="info">
+            <h1> Michael Knight </h1>
+            <h3>Music player</h3>
+            <br />
+            <br />
+          </div>
+        <Controls onClick={this.handleClick} playing={this.state.playing} 
+        showAlbum={this.state.showAlbum} />
+        <div className="playlist-heading">
+                Songs  &nbsp;   &nbsp;   &nbsp; 
+                <i className="fa fa-align-left" aria-hidden="true"></i>
+            </div>
+    <Tracklist
+        currentTrackIndex={this.state.currentTrackIndex}
+        selectTrackNumber={this.selectTrackNumber}
+        addToPlaylist={this.addToPlaylist}
+        showAlbum={this.state.showAlbum}
+    />
+        {this.state.playlistExists &&
+          <div>
+            <div className="playlist-heading">
+                Playlist  &nbsp;   &nbsp;   &nbsp; 
+                <i className="fa fa-align-left" aria-hidden="true"></i>
+            </div>
+          <Playlist
+          
+            currentTrackIndex={this.state.currentTrackIndex}
+            playlist={this.state.playlist} 
+            selectTrackNumber={this.selectTrackNumber}
+            removeFromPlaylist={this.removeFromPlaylist}
+          />
+        </div>
+        } 
+  </div>
 </div>
- 
-
-    <script src="js/index.js"></script>
-
-</body>
-
-    </div>
   );
 }
+}
+
+
+
 
 export default App;
+

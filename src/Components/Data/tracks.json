@@ -1,0 +1,17 @@
+{
+ 
+  "tracks":[
+    {"id":1,"artist":"State Champs","title":"Riverside","album":"Seams & Stitches","duration":"4:04"},
+    {"id":2,"artist":"Neck Deep","title":"Up In Smoke","album":"A History of Bad Decisions","duration":"3:12"},
+    {"id":3,"artist":"The Wonder Years","title":"There There","album":"The Greatest Generation","duration":"2:27"},
+    {"id":4,"artist":"Bear's Den","title":"Above the Cloud Of Pompeii","album":"Islands","duration":"4:40"},
+    {"id":5,"artist":"Tycho","title":"Dive","album":"Dive","duration":"4:27"},
+    {"id":6,"artist":"Four Year Strong","title":"Bbeatdown In The Key Of Happy","duration":"3:03"},
+    {"id":7,"artist":"Neck Deep","title":"A Part of Me","album":"Rain In July","duration":"03:09"},
+    {"id":8,"artist":"You & Me","title":"No Ordinary Love","album":"rose ave.","duration":"04:06"},
+    {"id":9,"artist":"Set Your Goals","title":"Mutiny","album":"Mutiny!","duration":"04:02"},
+    {"id":10,"artist":"The Wonder Years","title":" Just Want To Sell Out My Funeral","album":"The Greatest Generation","duration":"4:23"}
+  ]
+}
+
+
