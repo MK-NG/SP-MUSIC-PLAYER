@@ -7,7 +7,7 @@ You must first clone [this repo](https://github.com/MK-NG/oauthbridgespotify) an
 Once you have input the credentials (following the instructions on that repo) you can start that server which will run on port 8888.
 <br /><br />
 In this directory you can now run <br />
-`npm install`
+`npm install` <br />
 which will install all the dependencies for this project. <br />
 
 `npm start` <br />
